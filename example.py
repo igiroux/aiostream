@@ -2,13 +2,14 @@ import aiorx
 import asyncio
 
 
+# This awaitable computes 11² + 13² in 1.5 second
 awaitable = (aiorx
-    .interval(0.1)
-    .skip(10)
-    .take(5)
-    .filter(lambda x: x % 2)
-    .map(lambda x: x ** 2)
-    .reduce(lambda x, y: x + y)
+    .interval(0.1)               # Count from zero every 0.1 s
+    .skip(10)                    # Skip the first 10 numbers
+    .take(5)                     # Take the following 5
+    .filter(lambda x: x % 2)     # Keep odd numbers
+    .map(lambda x: x ** 2)       # Square the results
+    .reduce(lambda x, y: x + y)  # Add the numbers together
 )
 
 
