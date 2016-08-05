@@ -37,7 +37,10 @@ async def afilter(coro, ait):
 async def areduce(coro, ait, init=None):
     ait = aiter(ait)
     coro = asyncio.coroutine(coro)
-    value = await anext(ait) if init is None else init
+    try:
+        value = await anext(ait) if init is None else init
+    except StopAsyncIteration:
+        raise TypeError("reducing an empty sequence with no initial value")
     async for item in ait:
         value = await coro(value, item)
     return value
