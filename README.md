@@ -28,10 +28,10 @@ async def skip(ait, n):
 It is then quite straight forward to implement and use ReactiveX objects with asyncio.
 
 
-Example
--------
+Examples
+--------
 
-A working [example][8] is provided. It features the following awaitable:
+Two working examples are provided. The [first one][8] features the following awaitable:
 
 ```python
 # This awaitable computes 11² + 13² in 1.5 second
@@ -45,11 +45,24 @@ awaitable = (aiorx
 )
 ```
 
+The [second example][9] is a TCP server that computes the euclidean norm of vectors for its clients. It creates an observable from the TCP read stream and attach a chain of data processing. The debug printouts shows how the data is processed on the fly. Here's a simplified version:
+
+```python
+# This awaitable computes the euclidean norm of a vector from a read stream
+awaitable = (aiorx
+    .Observable(reader)
+    .map(lambda x: x.decode().strip())
+    .until(lambda x: x == '')
+    .map(lambda x: float(x) ** 2)
+    .reduce(lambda x, y: x + y, init=0)
+    .apply(lambda: x ** 0.5)
+    )
+```
 
 Requirement
 -----------
 
-- Python 3.6 with [PEP 525 implementation][9]
+- Python 3.6 with [PEP 525 implementation][10]
 
 [1]: http://reactivex.io/
 [2]: https://docs.python.org/3.4/library/asyncio.html
@@ -59,4 +72,5 @@ Requirement
 [6]: https://www.python.org/dev/peps/pep-0492
 [7]: http://reactivex.io/documentation/operators.html
 [8]: ./example.py
-[9]: https://github.com/1st1/cpython/tree/async_gen
+[9]: ./example2.py
+[10]: https://github.com/1st1/cpython/tree/async_gen
