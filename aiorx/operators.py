@@ -43,11 +43,35 @@ async def take(self, arg):
 
 
 @Observable.attach_method
+async def until(self, coro):
+    coro = asyncio.coroutine(coro)
+    async for item in self:
+        if await coro(item):
+            break
+        yield item
+
+
+@Observable.attach_method
 async def to_list(self):
     result = []
     async for item in self:
         result.append(item)
     return result
+
+
+@Observable.attach_method
+async def action(self, coro):
+    coro = asyncio.coroutine(coro)
+    async for item in self:
+        await coro(item)
+        yield item
+
+
+@Observable.attach_method(
+    return_type=Observable)
+def print_debug(self, msg='debug'):
+    func = lambda x: print(msg, ':', x)
+    return self.action(func)
 
 
 # Awaitable methods
@@ -56,6 +80,13 @@ async def to_list(self):
 async def apply(self, coro):
     coro = asyncio.coroutine(coro)
     return await coro(await self)
+
+
+@Awaitable.attach_method
+async def print_debug(self, msg='debug'):
+    result = await self
+    print(msg, ':', result)
+    return result
 
 
 # Plain functions
