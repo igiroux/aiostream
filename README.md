@@ -34,8 +34,8 @@ Examples
 Two working examples are provided. The [first one][8] features the following awaitable:
 
 ```python
-# This awaitable computes 11² + 13² in 1.5 second
-awaitable = (aiorx
+# This observable computes 11² + 13² in 1.5 second
+observable = (aiorx
     .interval(0.1)               # Count from zero every 0.1 s
     .skip(10)                    # Skip the first 10 numbers
     .take(5)                     # Take the following 5
@@ -48,15 +48,15 @@ awaitable = (aiorx
 The [second example][9] is a TCP server that computes the euclidean norm of vectors for its clients. It creates an observable from the TCP read stream and attach a chain of data processing. The debug printouts shows how the data is processed on the fly. Here's a simplified version:
 
 ```python
-# This awaitable computes the euclidean norm of a vector from a read stream
-awaitable = (aiorx
+# This observable computes the euclidean norm of a vector from a read stream
+observable = (aiorx
     .Observable(reader)
     .map(lambda x: x.decode().strip())
     .until(lambda x: x == '')
     .map(lambda x: float(x) ** 2)
     .reduce(lambda x, y: x + y, init=0)
-    .apply(lambda: x ** 0.5)
-    )
+    .map(lambda: x ** 0.5)
+)
 ```
 
 Requirement
