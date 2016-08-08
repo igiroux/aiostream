@@ -23,6 +23,11 @@ def reduce(self, coro, init=None):
 
 
 @Observable.attach_method
+def zip(self, *aits):
+    return amap(tuple, self, *aits)
+
+
+@Observable.attach_method
 async def skip(self, arg):
     async for i, item in aenumerate(self):
         if i >= arg:
