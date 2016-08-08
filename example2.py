@@ -42,7 +42,7 @@ async def euclidean_norm_handler(reader, writer):
     square_root =  lambda x: x ** 0.5
 
     # Create awaitable
-    awaitable = (aiorx
+    observable = (aiorx
         .Observable(reader)
         .print_debug('string')
         .map(strip)
@@ -51,7 +51,7 @@ async def euclidean_norm_handler(reader, writer):
         .print_debug('square')
         .action(write_cursor)
         .reduce(add, init=0)
-        .apply(square_root)
+        .map(square_root)
         .print_debug('norm')
     )
 
@@ -59,7 +59,7 @@ async def euclidean_norm_handler(reader, writer):
     while not reader.at_eof():
         writer.write(INSTRUCTIONS.encode())
         try:
-            result = await awaitable
+            result = await observable
         except ValueError:
             writer.write(ERROR.encode())
         else:
@@ -69,7 +69,7 @@ async def euclidean_norm_handler(reader, writer):
 # Main function
 
 def run_server(bind='127.0.0.1', port=8888):
-    
+
     # Start the server
     loop = asyncio.get_event_loop()
     coro = asyncio.start_server(euclidean_norm_handler, bind, port)
@@ -92,4 +92,3 @@ def run_server(bind='127.0.0.1', port=8888):
 
 if __name__ == '__main__':
     run_server()
-

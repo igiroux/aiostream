@@ -3,7 +3,7 @@ import asyncio
 
 
 # This awaitable computes 11² + 13² in 1.5 second
-awaitable = (aiorx
+observable = (aiorx
     .interval(0.1)               # Count from zero every 0.1 s
     .skip(10)                    # Skip the first 10 numbers
     .take(5)                     # Take the following 5
@@ -15,12 +15,11 @@ awaitable = (aiorx
 
 # Run the awaitable
 loop = asyncio.get_event_loop()
-result = loop.run_until_complete(awaitable)
+result = loop.run_until_complete(observable)
 print('11² + 13² = ', result)
 
 # Can run several times
-loop = asyncio.get_event_loop()
-result = loop.run_until_complete(awaitable)
+result = loop.run_until_complete(observable)
 print('11² + 13² = ', result)
 
 # Clean up
