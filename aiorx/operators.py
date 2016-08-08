@@ -1,26 +1,23 @@
 import asyncio
 import itertools
 
-from .factory import Observable, Awaitable, attach_function
+from .factory import Observable, attach_function
 from .common import aenumerate, amap, areduce, afilter
 
 
 # Observable methods
 
-@Observable.attach_method(
-    return_type=Observable)
+@Observable.attach_method
 def map(self, coro, *aits):
     return amap(coro, self, *aits)
 
 
-@Observable.attach_method(
-    return_type=Observable)
+@Observable.attach_method
 def filter(self, coro):
     return afilter(coro, self)
 
 
-@Observable.attach_method(
-    return_type=Awaitable)
+@Observable.attach_method
 def reduce(self, coro, init=None):
     return areduce(coro, self, init)
 
@@ -52,6 +49,19 @@ async def until(self, coro):
 
 
 @Observable.attach_method
+async def first(self):
+    async for item in self:
+        yield item
+
+
+@Observable.attach_method
+async def last(self):
+    async for item in self:
+        pass
+    yield item
+
+
+@Observable.attach_method
 async def to_list(self):
     result = []
     async for item in self:
@@ -67,26 +77,10 @@ async def action(self, coro):
         yield item
 
 
-@Observable.attach_method(
-    return_type=Observable)
+@Observable.attach_method
 def print_debug(self, msg='debug'):
     func = lambda x: print(msg, ':', x)
     return self.action(func)
-
-
-# Awaitable methods
-
-@Awaitable.attach_method
-async def apply(self, coro):
-    coro = asyncio.coroutine(coro)
-    return await coro(await self)
-
-
-@Awaitable.attach_method
-async def print_debug(self, msg='debug'):
-    result = await self
-    print(msg, ':', result)
-    return result
 
 
 # Plain functions

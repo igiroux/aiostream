@@ -1,4 +1,4 @@
 
 
-from .factory import Awaitable, Observable, attach_function
+from .factory import Observable, attach_function
 from . import operators
