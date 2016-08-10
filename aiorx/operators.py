@@ -18,8 +18,8 @@ def filter(self, coro):
 
 
 @Observable.attach_method
-def reduce(self, coro, init=None):
-    return areduce(coro, self, init)
+async def reduce(self, coro, init=None):
+    yield await areduce(coro, self, init)
 
 
 @Observable.attach_method
@@ -90,9 +90,12 @@ def print_debug(self, msg='debug'):
 
 # Plain functions
 
-reduce = attach_function(areduce, name='reduce')
 map = attach_function(amap, name='map')
 filter = attach_function(amap, name='filter')
+
+
+async def reduce(coro, obs, init=None):
+    yield await areduce(coro, obs, init)
 
 
 @attach_function

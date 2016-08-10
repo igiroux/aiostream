@@ -43,7 +43,7 @@ async def areduce(coro, ait, init=None):
         raise TypeError("reducing an empty sequence with no initial value")
     async for item in ait:
         value = await coro(value, item)
-    yield value
+    return value
 
 
 # Extra functions
